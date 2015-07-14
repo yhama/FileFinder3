@@ -1,0 +1,41 @@
+apply plugin: 'java'
+apply plugin: "sonar"
+
+sourceCompatibility='1.8'
+targetCompatibility='1.8'
+
+repositories{
+    mavenCentral()
+}
+
+dependencies{
+    compile group: 'args4j', name: 'args4j', version: '2.32'
+}
+
+jar{
+    manifest{
+        attributes 'Main-Class': 'com.github.finder.Main'
+    }
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+build << {
+    println ':copy dependencies to lib'
+    copy {
+        from configurations.runtime
+        into 'build/libs'
+     }
+}
+sonar {
+	project(":FileFinder").sonar.project.language = "groovy"
+    server {
+        url = "http://my.server.com"
+    }
+    database {
+        url = "jdbc:mysql://my.server.com/sonar"
+        driverClassName = "com.mysql.jdbc.Driver"
+        username = "Fred Flintstone"
+        password = "very clever"
+    }
+}
+
